@@ -1,0 +1,22 @@
+h1 {
+    text-align: center;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(3, 100px);
+    justify-content: center;
+    gap: 4px;
+}
+
+.grid {
+    border: 2px double blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mark {
+    font-size: 3em;
+}
