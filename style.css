@@ -17,6 +17,10 @@ h1 {
     align-items: center;
 }
 
+.grid:hover {
+    background-color: orange;
+}
+
 .mark {
     font-size: 3em;
 }
