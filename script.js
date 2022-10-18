@@ -23,34 +23,21 @@ const GameStateModule = (() => {
     const gridNodes = document.querySelectorAll('.grid');
 
     const addGridListeners = function() {
-
-        gridNodes.forEach(grid => {
-            grid.addEventListener('click', logTarget);
-        });
-
         gridNodes.forEach(grid => {
             grid.addEventListener('click', isValidGrid);
         });
     };
 
-    function logTarget(e) {
-        console.log(e.target)
-        console.log(typeof e.target.id);
-        console.log(e.target.hasChildNodes());
-        let gridID = parseInt(e.target.id);
-        console.log(typeof gridID);
-        console.log(gridID);
-    };
-
     // keeps track of gameboard array, and if a grid is valid (ergo empty/undefined)
     const isValidGrid = function(e) {
         let gridID = parseInt(e.target.id);
-        // is array index [i] empty?
+
         if (gameboard[gridID] === undefined) {
-            //is valid place to mark
-            return "Valid area";
-        } else {
-            return "That grid is already taken";
+            console.log("Valid Playable Grid");
+            console.log(gameboard);
+        } else if(gameboard[gridID] !== undefined) {
+            console.log("This grid is already taken");
+            console.log(gameboard);
         };
     };
 
