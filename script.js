@@ -1,44 +1,78 @@
 // Gameboard Module with IIFE. Just create board.
 const Gameboard = (() => {
-    // TicTacToe board as array with 9 empty elements
-    const gameboard = [,,,,,,,,,];
-
-    // DOM stuff
-    const selectBoard = document.querySelector('#board');
 
     const createBoard = function() {
-        for (let i = 0; i < gameboard.length; i++) {
+        const selectBoard = document.querySelector('#board');
+        for (let i = 0; i < 9; i++) {
             const grid = document.createElement('div');
             grid.setAttribute('id', i);
             grid.classList.add('grid');
-            // grid.addEventListener('click', e => {
-            //     console.log(e.target);
-            //     console.log(e.target.hasChildNodes());
-            // });
-            grid.addEventListener('click', logTarget);
             selectBoard.appendChild(grid);
         };
+    };
+
+    return {createBoard};
+})();
+
+Gameboard.createBoard();
+
+// Game State Module to keep track of board state
+const GameStateModule = (() => {
+    // TicTacToe board as array with 9 empty elements
+    const gameboard = [,,,,,,,,,];
+    const gridNodes = document.querySelectorAll('.grid');
+
+    const addGridListeners = function() {
+
+        gridNodes.forEach(grid => {
+            grid.addEventListener('click', logTarget);
+        });
+
+        gridNodes.forEach(grid => {
+            grid.addEventListener('click', isValidGrid);
+        });
     };
 
     function logTarget(e) {
         console.log(e.target)
         console.log(typeof e.target.id);
         console.log(e.target.hasChildNodes());
-        let gridID = e.target.id;
-        return console.log(gridID);
+        let gridID = parseInt(e.target.id);
+        console.log(typeof gridID);
+        console.log(gridID);
     };
+
+    // keeps track of gameboard array, and if a grid is valid (ergo empty/undefined)
+    const isValidGrid = function(e) {
+        let gridID = parseInt(e.target.id);
+        // is array index [i] empty?
+        if (gameboard[gridID] === undefined) {
+            //is valid place to mark
+            return "Valid area";
+        } else {
+            return "That grid is already taken";
+        };
+    };
+
+    // assign array value index
+    const assignMark = function() {
+        // sample assign
+        gameboard[0] = 'O';
+        console.log(gameboard);
+    }
 
     const publicBoard = function() {
         // shows state of board, empty or filled. initially empty
         console.log(gameboard);
     };
 
-    return {createBoard, publicBoard, gameboard};
+    return {addGridListeners, assignMark, isValidGrid};
 })();
 
-Gameboard.createBoard();
-Gameboard.publicBoard();
+GameStateModule.addGridListeners();
+GameStateModule.assignMark();
 
+// Now that board is created and kept track of, create players for use
 // Player Factory
 const playerFactory = (tagName) => {
     const getTagName = () => tagName;
@@ -66,33 +100,12 @@ const playerFactory = (tagName) => {
         };
     };
 
-    const {publicBoard} = Gameboard;
-
-    return {getTagName, chooseSide, publicBoard};
+    return {getTagName, chooseSide};
 };
 
 const gorny = playerFactory('Gorny');
 console.log(gorny.tagName);
 console.log(gorny.getTagName());
 
-// Game State Module
-const GameStateModule = (() => {
-    //keeps track of game state of board
-    const {gameboard} = Gameboard;
-
-    // keeps track of gameboard array, and if a grid is valid (ergo empty)
-    const isValidGrid = function() {
-        // is array index [i] empty?
-    }
-
-    // assign array value index
-    const assignMark = function() {
-        // sample push
-        gameboard[0] = 'O';
-        console.log(gameboard);
-    }
-
-    return {assignMark};
-})();
-
-GameStateModule.assignMark();
+// reorganize code, consider deferring adding event listeners on grids on board creation to a later point
+// click grid and mark symbol
