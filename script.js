@@ -16,52 +16,55 @@ const Gameboard = (() => {
 
 Gameboard.createBoard();
 
-// Game State Module to keep track of board state
+// Game State Module to keep track of board state represented by array
 const GameStateModule = (() => {
     // TicTacToe board as array with 9 empty elements
     const gameboard = [,,,,,,,,,];
-    const gridNodes = document.querySelectorAll('.grid');
 
     const addGridListeners = function() {
+        // add event listeners to grid divs
+        const gridNodes = document.querySelectorAll('.grid');
+
         gridNodes.forEach(grid => {
             grid.addEventListener('click', isValidGrid);
         });
+
+        gridNodes.forEach(grid => {
+            grid.addEventListener('click', updateArrayValue);
+        })
     };
 
-    // keeps track of gameboard array, and if a grid is valid (ergo empty/undefined)
     const isValidGrid = function(e) {
+        // keeps track of gameboard array, and if a grid is valid (ergo whether or not it has children)
+        let haveGridChildren = e.target.hasChildNodes();
+        console.log("Does this grid have children? " + haveGridChildren);
+        console.log(haveGridChildren ? "This grid is already taken" : "This grid is free");
+    };
+
+    const updateArrayValue = function(e) {
+        // update array value index
         let gridID = parseInt(e.target.id);
 
         if (gameboard[gridID] === undefined) {
-            console.log("Valid Playable Grid");
-            console.log(gameboard);
-        } else if(gameboard[gridID] !== undefined) {
-            console.log("This grid is already taken");
-            console.log(gameboard);
+            gameboard[gridID] = gridID;
+            publicBoard();
         };
     };
-
-    // assign array value index
-    const assignMark = function() {
-        // sample assign
-        gameboard[0] = 'O';
-        console.log(gameboard);
-    }
 
     const publicBoard = function() {
         // shows state of board, empty or filled. initially empty
         console.log(gameboard);
     };
 
-    return {addGridListeners, assignMark, isValidGrid};
+    return {addGridListeners, updateArrayValue, isValidGrid};
 })();
 
 GameStateModule.addGridListeners();
-GameStateModule.assignMark();
 
 // Now that board is created and kept track of, create players for use
 // Player Factory
 const playerFactory = (tagName) => {
+
     const getTagName = () => tagName;
 
     const chooseSide = function () {
