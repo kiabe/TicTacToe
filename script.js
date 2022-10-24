@@ -18,32 +18,32 @@ Gameboard.createBoard();
 
 // Now that board is created, create players for use
 // Player Factory creates players
-const playerFactory = (tagName) => {
+const PlayerFactory = (tagName) => {
 
     const getTagName = () => tagName;
 
-    const chooseSide = function () {
-    // what is player playing? X or O? initially undefined
-    let firstPlayer = 'X';
-    let secondPlayer = 'O';
+    // const chooseSide = function () {
+    // // what is player playing? X or O? initially undefined
+    // let firstPlayer = 'X';
+    // let secondPlayer = 'O';
 
-    let symbol = prompt("Do you want to go first or second?");
+    // let symbol = prompt("Do you want to go first or second?");
 
-        if (symbol !== null && symbol === 'first') {
-            side = 'X';
-            console.log(side);
-        } else if (symbol !== null && symbol === 'second') {
-            side = 'O';
-            console.log(side);
-        } else {
-            console.log("Hey, if you're here, it's time to reset")
-        }
-    }
+    //     if (symbol !== null && symbol === 'first') {
+    //         side = 'X';
+    //         console.log(side);
+    //     } else if (symbol !== null && symbol === 'second') {
+    //         side = 'O';
+    //         console.log(side);
+    //     } else {
+    //         console.log("Hey, if you're here, it's time to reset")
+    //     }
+    // }
 
-    return {getTagName, chooseSide};
+    return {getTagName};
 };
 
-const gorny = playerFactory('Gorny');
+const gorny = PlayerFactory('Gorny');
 console.log(gorny.tagName);
 console.log(gorny.getTagName());
 // gorny.chooseSide();
@@ -89,12 +89,12 @@ const GameStateModule = (() => {
             gameboard[gridID] = 'X';
             markGrid(gridID);
             turnCounter();
-            publicBoard();
+            publicBoardAll();
         } else if (gameboard[gridID] === undefined && isPlayerTwoTurn === true) {
             gameboard[gridID] = 'O';
             markGrid(gridID);
             turnCounter();
-            publicBoard();
+            publicBoardAll();
         };
     };
 
@@ -105,9 +105,14 @@ const GameStateModule = (() => {
         gridNodes[num].appendChild(mark);
     };
 
-    const publicBoard = function() {
+    const publicBoardAll = function() {
         // shows state of board, empty or filled. initially empty
         console.log(gameboard);
+        return gameboard;
+    };
+
+    const publicBoardSpecific = function(num) {
+        return gameboard[num];
     };
 
     const turnCounter = function() {
@@ -129,7 +134,35 @@ const GameStateModule = (() => {
         }
     };
 
-    return {addGridListeners, updateGameboardAndGrid, isValidGrid, turnCounter};
+    return {addGridListeners, updateGameboardAndGrid, isValidGrid, turnCounter, publicBoardAll, publicBoardSpecific};
 })();
 
 GameStateModule.addGridListeners();
+
+const Computer = () => {
+    const {publicBoardSpecific} = GameStateModule;
+
+    const getRandomNum = function(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
+    }
+
+    const publicRNG = function() {
+        console.log(getRandomNum(0, 8));
+    }
+
+    //move computer
+    const computerMove = function() {
+        // checks array. if array at random index is undefined/empty, spot is available
+        if (publicBoardSpecific(getRandomNum()) === undefined) {
+            console.log('succ?')
+        }
+    }
+
+
+    return {getRandomNum, publicRNG, computerMove};
+}
+
+const computer = Computer();
+console.log(computer.getRandomNum(0, 8));
