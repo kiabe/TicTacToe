@@ -52,7 +52,6 @@ console.log(gorny.getTagName());
 const GameStateModule = (() => {
     // TicTacToe board as array with 9 empty elements
     const gameboard = [,,,,,,,,,];
-    const gridNodes = document.querySelectorAll('.grid');
     let count = 0;
     let isPlayerOneTurn = true;
     let isPlayerTwoTurn = false;
@@ -99,6 +98,7 @@ const GameStateModule = (() => {
     };
 
     const markGrid = function(num) {
+        const gridNodes = document.querySelectorAll('.grid');
         const mark = document.createElement('div');
         mark.classList.add('mark');
         mark.textContent = gameboard[num];
@@ -112,7 +112,12 @@ const GameStateModule = (() => {
     };
 
     const publicBoardSpecific = function(num) {
+        console.log(gameboard[num]);
         return gameboard[num];
+    };
+
+    const computerFillArray = function(num, symbol) {
+        return gameboard[num] = symbol;
     };
 
     const turnCounter = function() {
@@ -134,13 +139,14 @@ const GameStateModule = (() => {
         }
     };
 
-    return {addGridListeners, updateGameboardAndGrid, isValidGrid, turnCounter, publicBoardAll, publicBoardSpecific};
+    return {addGridListeners, isValidGrid, updateGameboardAndGrid, markGrid, turnCounter, publicBoardAll, publicBoardSpecific, computerFillArray};
 })();
 
 GameStateModule.addGridListeners();
 
 const Computer = () => {
-    const {publicBoardSpecific} = GameStateModule;
+    const {markGrid, publicBoardAll, publicBoardSpecific, computerFillArray} = GameStateModule;
+
 
     const getRandomNum = function(min, max) {
         min = Math.ceil(min);
@@ -152,13 +158,17 @@ const Computer = () => {
         console.log(getRandomNum(0, 8));
     }
 
-    //move computer
+    // move computer
     const computerMove = function() {
+        let num = getRandomNum(0, 8);
         // checks array. if array at random index is undefined/empty, spot is available
-        if (publicBoardSpecific(getRandomNum()) === undefined) {
-            console.log('succ?')
-        }
-    }
+        if (publicBoardSpecific(num) === undefined) {
+            console.log('succ?');
+            computerFillArray(num, 'X');
+            markGrid(num);
+            publicBoardAll();
+        };
+    };
 
 
     return {getRandomNum, publicRNG, computerMove};
