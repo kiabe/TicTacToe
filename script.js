@@ -22,24 +22,6 @@ const PlayerFactory = (tagName) => {
 
     const getTagName = () => tagName;
 
-    // const chooseSide = function () {
-    // // what is player playing? X or O? initially undefined
-    // let firstPlayer = 'X';
-    // let secondPlayer = 'O';
-
-    // let symbol = prompt("Do you want to go first or second?");
-
-    //     if (symbol !== null && symbol === 'first') {
-    //         side = 'X';
-    //         console.log(side);
-    //     } else if (symbol !== null && symbol === 'second') {
-    //         side = 'O';
-    //         console.log(side);
-    //     } else {
-    //         console.log("Hey, if you're here, it's time to reset")
-    //     }
-    // }
-
     return {getTagName};
 };
 
@@ -53,6 +35,7 @@ const GameStateModule = (() => {
     // TicTacToe board as array with 9 empty elements
     const gameboard = [,,,,,,,,,];
     let count = 0;
+    let symbol;
     let isPlayerOneTurn = true;
     let isPlayerTwoTurn = false;
 
@@ -88,11 +71,13 @@ const GameStateModule = (() => {
             gameboard[gridID] = 'X';
             markGrid(gridID);
             turnCounter();
+            winCheck();
             publicBoardAll();
         } else if (gameboard[gridID] === undefined && isPlayerTwoTurn === true) {
             gameboard[gridID] = 'O';
             markGrid(gridID);
             turnCounter();
+            winCheck();
             publicBoardAll();
         };
     };
@@ -116,7 +101,8 @@ const GameStateModule = (() => {
         return gameboard[num];
     };
 
-    const computerFillArray = function(num, symbol) {
+    const computerFillArray = function(num) {
+        turnCounter();
         return gameboard[num] = symbol;
     };
 
@@ -126,18 +112,35 @@ const GameStateModule = (() => {
         if (count % 2 === 0) {
             // it's player1 turn :: X
             // after increment, player turn switches
+            symbol = "X";
             count++;
             console.log(count);
             isPlayerOneTurn = false;
             isPlayerTwoTurn = true;
         } else {
             // it's player2 turn :: O
+            symbol = "O";
             count++;
             console.log(count);
             isPlayerTwoTurn = false;
             isPlayerOneTurn = true;
         }
     };
+
+    const winCheck = function() {
+        // win cons (8)
+        // [0 1 2
+        //  3 4 5
+        //  6 7 8]
+        // [0,1,2],[3,4,5],[6,7,8] horizontals
+        // [0,3,6],[1,4,7],[2,5,8] verticals
+        // [0,4,8],[2,4,6] diagonals
+        // if anything of these combos all have the same symbol, x or o, that is a win
+
+        if (publicBoardSpecific(0) === 'X' && publicBoardSpecific(1) === 'X' && publicBoardSpecific(2) === 'X') {
+            console.log('X wins');
+        }
+    }
 
     return {addGridListeners, isValidGrid, updateGameboardAndGrid, markGrid, turnCounter, publicBoardAll, publicBoardSpecific, computerFillArray};
 })();
@@ -162,14 +165,16 @@ const Computer = () => {
     const computerMove = function() {
         let num = getRandomNum(0, 8);
         // checks array. if array at random index is undefined/empty, spot is available
+        // if spot is not available, recursively call computerMove to gen another random num until a valid move is made
         if (publicBoardSpecific(num) === undefined) {
             console.log('succ?');
             computerFillArray(num, 'X');
             markGrid(num);
             publicBoardAll();
+        } else if (publicBoardSpecific(num) !== undefined){
+            computerMove();
         };
     };
-
 
     return {getRandomNum, publicRNG, computerMove};
 }
